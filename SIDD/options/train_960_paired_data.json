@@ -1,0 +1,67 @@
+{
+  "task": "960_paired" // task name
+  , "gpu_ids": [0]
+  , "n_channels": 3
+
+  , "path": {
+    "root": "translate"
+    , "pretrained_net": null
+  }
+
+  , "model": {
+    "nls": [2, 4]
+    , "zn_dim": 16
+    , "num_down": 0
+  }
+
+  , "datasets": {
+    "train": {
+      "name": "train_dataset"
+      , "dataroots_pair": ["path/to/paired/dataset/clean", "path/to/paired/dataset/noisy"]
+      , "dataroots_unpair": ["path/to/unpaired/dataset/clean", "path/to/unpaired/dataset/noisy"]
+      , "domain_frequency": {"-1": 1, "0": 1, "1": 1}
+
+      , "n_max": null
+      , "H_size": 64
+      , "dataloader_shuffle": false
+      , "dataloader_num_workers": 0
+      , "dataloader_batch_size": 8
+
+    }
+    , "test": {
+      "name": "test_dataset"
+      , "dataroots_pair": ["path/to/validation/set/clean/", "path/to/validation/set/noisy/"]
+      , "dataroots_unpair": null
+
+      , "H_size": 256
+      , "n_max": 20
+    }
+  }
+
+  , "train": { 
+    "optimizer_type": "adam" 
+    , "optimizer_lr": 1e-4
+    , "KL_anneal": "linear"
+    , "KL_anneal_maxiter": 1e4
+    , "KL_weight": 1e-2
+    , "KLZ_weight": 1e-7
+    
+    , "Per_weight": 1e-2
+
+    , "D_optimizer_lr": 1e-4
+    , "D_lossfn_weight": 1e-1
+    , "D_update_ratio": 1
+    , "D_init_iters": 0
+
+    , "scheduler_type": "MultiStepLR"
+    , "scheduler_milestones": [150000, 225000, 270000, 285000]
+    , "scheduler_gamma": 0.5
+    , "D_scheduler_milestones": [150000, 225000, 270000, 285000]
+    , "D_scheduler_gamma": 0.5
+
+    , "checkpoint_test": 50000    // for testing
+    , "checkpoint_save": 50000    // for saving model
+    , "checkpoint_print": 1000    // for print
+  }
+}
+
