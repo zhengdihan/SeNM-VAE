@@ -63,7 +63,6 @@ def save_files(i):
 
 Parallel(n_jobs=NUM_CORES)(delayed(save_files)(i) for i in tqdm(range(len(noisy_files))))
 
-
 # Generate unpaired dataset
 all_clean_files = sorted(glob.glob(f'{tar}/clean/*.png'))
 

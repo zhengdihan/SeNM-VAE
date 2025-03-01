@@ -1,32 +1,11 @@
 import os.path
 import logging
-
 import torch
-import torch.distributions as dist
 
 from utils import utils_logger
 from utils import utils_image as util
 
 from tqdm import tqdm
-
-def random_noise_levels_sidd(bs):
-    """ Where read_noise in SIDD is not 0 """
-    log_min_shot_noise = torch.log10(torch.Tensor([0.00068674]))
-    log_max_shot_noise = torch.log10(torch.Tensor([0.02194856]))
-    distribution = dist.uniform.Uniform(log_min_shot_noise, log_max_shot_noise)
-      
-    log_shot_noise = distribution.sample(torch.Size([bs]))
-    shot_noise = torch.pow(10,log_shot_noise)
-      
-    distribution = dist.normal.Normal(torch.Tensor([0.0]), torch.Tensor([0.20]))
-    read_noise = distribution.sample(torch.Size([bs]))
-    line = lambda x: 1.85 * x + 0.30  ### Line SIDD test set
-    log_read_noise = line(log_shot_noise) + read_noise
-    read_noise = torch.pow(10,log_read_noise)
-    
-    variance = shot_noise + read_noise
-    std = torch.sqrt(variance) * 1
-    return std.unsqueeze(2).unsqueeze(3)
 
 def main():
 
@@ -75,8 +54,8 @@ def main():
     # ----------------------------------------
     # load model
     # ----------------------------------------
-    from SIDD.models.network_senmvae import PVAE
-    model = PVAE(nls=nls, num_down=num_down, zn_dim=zn_dim)
+    from .models.network_senmvae import SeNMVAE
+    model = SeNMVAE(nls=nls, num_down=num_down, zn_dim=zn_dim)
     states = torch.load(model_path)
     model.load_state_dict(states, strict=True)
     model.eval()
@@ -118,9 +97,9 @@ def main():
         # (2) img_G
         # ------------------------------------
 
-        input_noise_level = random_noise_levels_sidd(1).to(device) / scale
         img_H = img_H / scale
-        
+
+        input_noise_level = torch.std(img_L - img_H).item()
         img_G = model.translate(img_H, input_noise_level, temperature=temperature)
 
         if normalize:
