@@ -5,9 +5,7 @@ import os
 from natsort import natsorted
 import cv2
 from joblib import Parallel, delayed
-import multiprocessing
 import argparse
-import shutil
 
 
 parser = argparse.ArgumentParser(description='Generate patches from Full Resolution images')

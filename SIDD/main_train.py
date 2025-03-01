@@ -3,7 +3,6 @@ import math
 import argparse
 import random
 import numpy as np
-from collections import OrderedDict
 import logging
 from torch.utils.data import DataLoader
 import torch
@@ -13,7 +12,7 @@ from utils import utils_image as util
 from utils import utils_option as option
 
 from data.dataset import SemiSupDataset
-from SIDD.models.model_senmvae import SeNMVAEIR
+from .models.model_senmvae import SeNMVAEIR
 
 def main(json_path='./options/train.json'):
 
